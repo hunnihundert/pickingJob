@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">PickingJob</string>
+    <string name="button_login_login">Login</string>
+    <string name="textView_login_forgotPassword"><u>Forgot Password?</u></string>
+    <string name="textInputLayout_login_emailHint">Email</string>
+    <string name="textInputLayout_login_passwordHint">Password</string>
+</resources>
