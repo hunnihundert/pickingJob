@@ -4,4 +4,9 @@
     <string name="textView_login_forgotPassword"><u>Forgot Password?</u></string>
     <string name="textInputLayout_login_emailHint">Email</string>
     <string name="textInputLayout_login_passwordHint">Password</string>
+    <string name="textInputLayout_login_emailEmpty">Please enter email address.</string>
+    <string name="textInputLayout_login_passwordEmpty">Please enter password.</string>
+    <string name="textInputLayout_login_passwordIncorrect">Password incorrect.</string>
+    <string name="textInputLayout_login_invalidLoginCredentials">Login failed. Invalid Login credentials.</string>
+    <string name="contentDescription_login_logo">Logo</string>
 </resources>
