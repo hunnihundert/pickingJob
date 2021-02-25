@@ -12,7 +12,9 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.textfield.TextInputLayout
 import com.ocfulfillment.fulfillmentapp.R
+import com.ocfulfillment.fulfillmentapp.data.remote.RetrofitClient
 import com.ocfulfillment.fulfillmentapp.databinding.FragmentLoginBinding
+import com.ocfulfillment.fulfillmentapp.repository.PickingJobRepository
 import com.ocfulfillment.fulfillmentapp.ui.viewmodel.MainViewModel
 import com.ocfulfillment.fulfillmentapp.ui.viewmodel.MainViewModelFactory
 
@@ -21,6 +23,7 @@ class LoginFragment : Fragment() {
     private lateinit var binding: FragmentLoginBinding
     private val mainViewModel: MainViewModel by activityViewModels {
         MainViewModelFactory(
+            PickingJobRepository(RetrofitClient.getPickingJobsApi()),
             requireActivity().application
         )
     }
@@ -84,7 +87,6 @@ class LoginFragment : Fragment() {
         mainViewModel.passwordInputError.observe(viewLifecycleOwner) { errorString ->
             password.error = errorString
         }
-
 
     }
 }

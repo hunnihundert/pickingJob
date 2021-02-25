@@ -24,6 +24,10 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            buildConfigField "String", "API_URL", "\"https://api-gateway-wdlsgf2z3a-ew.a.run.app/\""
+        }
+        debug {
+            buildConfigField "String", "API_URL", "\"https://api-gateway-wdlsgf2z3a-ew.a.run.app/\""
         }
     }
     buildFeatures {
@@ -59,4 +63,17 @@ dependencies {
 
     // Android KTX
     implementation "androidx.fragment:fragment-ktx:$fragment_version"
+
+    // Retrofit
+    implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
+    implementation "com.squareup.retrofit2:converter-gson:$retrofit_version"
+
+    // OkHttp
+    implementation "com.squareup.okhttp3:okhttp:$okhttp_version"
+    implementation "com.squareup.okhttp3:logging-interceptor:$okhttp_version"
+
+    // Firebase
+    implementation platform('com.google.firebase:firebase-bom:26.5.0')
+    implementation 'com.google.firebase:firebase-firestore-ktx'
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-play-services:$coroutine_version"
 }
