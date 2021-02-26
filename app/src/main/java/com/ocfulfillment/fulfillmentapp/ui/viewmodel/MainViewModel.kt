@@ -60,7 +60,10 @@ class MainViewModel(private val repository: PickingJobRepository, application: A
                     }
                     _progress.value = Progress.Idle
                 }
+        } else {
+            _progress.value = Progress.Idle
         }
+
     }
 
     private fun resetErrorTexts() {
@@ -156,22 +159,24 @@ class MainViewModel(private val repository: PickingJobRepository, application: A
         _progress.value = Progress.Loading
         val pickingJobs = MutableLiveData<List<PickingJob>>()
         try {
-            repository.getPickingJobs().addSnapshotListener { snapshot, error ->
-                if (error != null) {
-                    val errorCode = error.code
-                    var errorMessage = getApplication<Application>().resources.getString(R.string.errorMessage_unknownError)
-                    error.localizedMessage?.let {
-                       errorMessage = it
+            if(_user.value != null) {
+                repository.getPickingJobs().addSnapshotListener { snapshot, error ->
+                    if (error != null) {
+                        val errorCode = error.code
+                        var errorMessage = getApplication<Application>().resources.getString(R.string.errorMessage_unknownError)
+                        error.localizedMessage?.let {
+                            errorMessage = it
+                        }
+                        _errorMessage.value = Event("$errorCode: $errorMessage")
+                        return@addSnapshotListener
                     }
-                    _errorMessage.value = Event("$errorCode: $errorMessage")
-                    return@addSnapshotListener
-                }
-                val pickingJobsLive = mutableListOf<PickingJob>()
-                if (snapshot != null) {
-                    for (document in snapshot) {
-                        pickingJobsLive.add(document.toObject(PickingJob::class.java))
+                    val pickingJobsLive = mutableListOf<PickingJob>()
+                    if (snapshot != null) {
+                        for (document in snapshot) {
+                            pickingJobsLive.add(document.toObject(PickingJob::class.java))
+                        }
+                        pickingJobs.value = pickingJobsLive
                     }
-                    pickingJobs.value = pickingJobsLive
                 }
             }
         } catch (throwable: Throwable) {
