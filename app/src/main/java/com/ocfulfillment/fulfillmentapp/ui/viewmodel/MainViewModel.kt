@@ -53,6 +53,8 @@ class MainViewModel(private val repository: PickingJobRepository, application: A
                     if (task.isSuccessful) {
                         _user.value = auth.currentUser
                         setToken()
+                        this.email.value = ""
+                        this.password.value = ""
                     } else {
                         setInvalidEmailOrPassWord()
                     }
@@ -193,6 +195,11 @@ class MainViewModel(private val repository: PickingJobRepository, application: A
         }
         _progress.value = Progress.Idle
         return pickingJobs
+    }
+
+    internal fun signOut() {
+        auth.signOut()
+        _user.value = null
     }
 
     companion object {

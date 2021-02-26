@@ -8,6 +8,7 @@ import android.widget.Button
 import android.widget.ProgressBar
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
@@ -42,6 +43,7 @@ class PickJobsFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        setHasOptionsMenu(true)
         binding = FragmentPickJobsBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -50,6 +52,20 @@ class PickJobsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         initUi()
         initObserver()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.menu, menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when(item.itemId) {
+            R.id.logout -> {
+                mainViewModel.signOut()
+                true
+            }
+            else -> true
+        }
     }
 
     private fun initUi() {
@@ -82,6 +98,7 @@ class PickJobsFragment : Fragment() {
                 Snackbar.make(requireActivity().findViewById(R.id.nav_host_fragment),errorMessage,Snackbar.LENGTH_SHORT).show()
             }
         }
+
         mainViewModel.progress.observe(viewLifecycleOwner) { progress ->
             when(progress) {
                 MainViewModel.Progress.Idle -> {
@@ -90,6 +107,9 @@ class PickJobsFragment : Fragment() {
                 MainViewModel.Progress.Loading -> {
                     progressBar.visibility = View.VISIBLE
                 }
+        mainViewModel.user.observe(viewLifecycleOwner) { firebaseUser ->
+            if(firebaseUser == null) {
+                findNavController().navigate(PickJobsFragmentDirections.actionPickJobsFragmentToLoginFragment())
             }
         }
     }
