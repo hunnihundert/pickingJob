@@ -4,4 +4,12 @@
     <string name="textView_login_forgotPassword"><u>Forgot Password?</u></string>
     <string name="textInputLayout_login_emailHint">Email</string>
     <string name="textInputLayout_login_passwordHint">Password</string>
+    <string name="textInputLayout_login_emailEmpty">Please enter email address.</string>
+    <string name="textInputLayout_login_passwordEmpty">Please enter password.</string>
+    <string name="textInputLayout_login_invalidEmail">Invalid Login. Check Email</string>
+    <string name="textInputLayout_login_invalidPassword">Invalid Login. Check Password.</string>
+    <string name="textInputLayout_login_invalidLoginCredentials">Invalid Login Credentials</string>
+    <string name="contentDescription_login_logo">Logo</string>
+    <string name="errorMessage_unknownError">Unknown Error</string>
+    <string name="menuItem_title_logout">Log out</string>
 </resources>

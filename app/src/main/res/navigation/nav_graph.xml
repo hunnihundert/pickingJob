@@ -7,12 +7,20 @@
 
     <fragment
         android:id="@+id/loginFragment"
-        android:name="com.hooni.pickingjob.ui.view.LoginFragment"
-        android:label="LoginFragment"
-        tools:layout="@layout/fragment_login"/>
+        android:name="com.ocfulfillment.fulfillmentapp.ui.view.LoginFragment"
+        android:label=""
+        tools:layout="@layout/fragment_login">
+        <action
+            android:id="@+id/action_loginFragment_to_pickJobsFragment"
+            app:destination="@id/pickJobsFragment" />
+    </fragment>
     <fragment
         android:id="@+id/pickJobsFragment"
-        android:name="com.hooni.pickingjob.ui.view.PickJobsFragment"
-        android:label="PickJobsFragment"
-        tools:layout="@layout/fragment_pick_jobs"/>
+        android:name="com.ocfulfillment.fulfillmentapp.ui.view.PickJobsFragment"
+        android:label=""
+        tools:layout="@layout/fragment_pick_jobs">
+        <action
+            android:id="@+id/action_pickJobsFragment_to_loginFragment"
+            app:destination="@id/loginFragment" />
+    </fragment>
 </navigation>
