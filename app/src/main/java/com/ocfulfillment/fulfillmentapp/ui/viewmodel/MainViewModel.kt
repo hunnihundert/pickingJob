@@ -2,7 +2,6 @@ package com.ocfulfillment.fulfillmentapp.ui.viewmodel
 
 import android.app.Activity
 import android.app.Application
-import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -14,7 +13,9 @@ import com.google.firebase.ktx.Firebase
 import com.ocfulfillment.fulfillmentapp.R
 import com.ocfulfillment.fulfillmentapp.data.model.PickingJob
 import com.ocfulfillment.fulfillmentapp.repository.PickingJobRepository
+import com.ocfulfillment.fulfillmentapp.util.Event
 import kotlinx.coroutines.launch
+import retrofit2.HttpException
 
 class MainViewModel(private val repository: PickingJobRepository, application: Application) :
     AndroidViewModel(application) {
@@ -22,14 +23,17 @@ class MainViewModel(private val repository: PickingJobRepository, application: A
     private var auth: FirebaseAuth = Firebase.auth
     private var token: String? = null
 
-    val user: LiveData<FirebaseUser?>
-        get() = _user
     private var _user = MutableLiveData<FirebaseUser?>(null)
+    val user: LiveData<FirebaseUser?> = _user
+
+    private var _errorMessage = MutableLiveData<Event<String>>()
+    val errorMessage: LiveData<Event<String>> = _errorMessage
 
     val email = MutableLiveData<String>()
     val password = MutableLiveData<String>()
     val emailInputError = MutableLiveData("")
     val passwordInputError = MutableLiveData("")
+
 
     internal fun login(activity: Activity) {
         resetErrorTexts()
@@ -71,10 +75,12 @@ class MainViewModel(private val repository: PickingJobRepository, application: A
     }
 
     private fun setInvalidEmailOrPassWord() {
+        _errorMessage.value =
+            Event(getApplication<Application>().resources.getString(R.string.textInputLayout_login_invalidLoginCredentials))
         emailInputError.value =
-            getApplication<Application>().resources.getString(R.string.textInputLayout_login_invalidLoginCredentials)
+            getApplication<Application>().resources.getString(R.string.textInputLayout_login_invalidEmail)
         passwordInputError.value =
-            getApplication<Application>().resources.getString(R.string.textInputLayout_login_invalidLoginCredentials)
+            getApplication<Application>().resources.getString(R.string.textInputLayout_login_invalidPassword)
     }
 
     private fun setToken() {
@@ -100,18 +106,37 @@ class MainViewModel(private val repository: PickingJobRepository, application: A
     }
 
     private fun updatePickingJob(pickingJob: PickingJob) {
+
         val pickingJobId = pickingJob.id
         val pickingJobStatus = pickingJob.status
         viewModelScope.launch {
-            if (token != null) {
-                repository.updatePickingJob(
-                    token!!,
-                    pickingJob.version,
-                    pickingJobId,
-                    pickingJobStatus
-                )
-            } else {
-                // access token null
+            try {
+                if (token != null) {
+                    repository.updatePickingJob(
+                        token!!,
+                        pickingJob.version,
+                        pickingJobId,
+                        pickingJobStatus
+                    )
+                }
+            } catch (throwable: Throwable) {
+                var errorMessage = getApplication<Application>().resources.getString(R.string.errorMessage_unknownError)
+                when (throwable) {
+                    is HttpException -> {
+                        val errorCode = throwable.code()
+                        throwable.localizedMessage?.let {
+                            errorMessage = it
+                        }
+                        _errorMessage.value = Event("$errorCode: $errorMessage")
+                    }
+                    else -> {
+                        throwable.localizedMessage?.let {
+                            errorMessage = it
+                        }
+                        _errorMessage.value = Event(errorMessage)
+
+                    }
+                }
             }
 
         }
@@ -119,17 +144,42 @@ class MainViewModel(private val repository: PickingJobRepository, application: A
 
     internal fun getPickingJobsLiveData(): LiveData<List<PickingJob>> {
         val pickingJobs = MutableLiveData<List<PickingJob>>()
-        repository.getPickingJobs().addSnapshotListener { snapshot, error ->
-            if(error != null) {
-                // error
-                return@addSnapshotListener
-            }
-            val pickingJobsLive = mutableListOf<PickingJob>()
-            if (snapshot != null) {
-                for (document in snapshot) {
-                    pickingJobsLive.add(document.toObject(PickingJob::class.java))
+        try {
+            repository.getPickingJobs().addSnapshotListener { snapshot, error ->
+                if (error != null) {
+                    val errorCode = error.code
+                    var errorMessage = getApplication<Application>().resources.getString(R.string.errorMessage_unknownError)
+                    error.localizedMessage?.let {
+                       errorMessage = it
+                    }
+                    _errorMessage.value = Event("$errorCode: $errorMessage")
+                    return@addSnapshotListener
                 }
-                pickingJobs.value = pickingJobsLive
+                val pickingJobsLive = mutableListOf<PickingJob>()
+                if (snapshot != null) {
+                    for (document in snapshot) {
+                        pickingJobsLive.add(document.toObject(PickingJob::class.java))
+                    }
+                    pickingJobs.value = pickingJobsLive
+                }
+            }
+        } catch (throwable: Throwable) {
+            var errorMessage = getApplication<Application>().resources.getString(R.string.errorMessage_unknownError)
+            when (throwable) {
+                is HttpException -> {
+                    val errorCode = throwable.code()
+                    throwable.localizedMessage?.let {
+                        errorMessage = it
+                    }
+                    _errorMessage.value = Event("$errorCode: $errorMessage")
+                }
+                else -> {
+                    throwable.localizedMessage?.let {
+                        errorMessage = it
+                    }
+                    _errorMessage.value = Event(errorMessage)
+
+                }
             }
         }
         return pickingJobs
