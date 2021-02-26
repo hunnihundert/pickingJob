@@ -1,9 +1,7 @@
 package com.ocfulfillment.fulfillmentapp.ui.view
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.Button
 import android.widget.ProgressBar
 import androidx.fragment.app.Fragment
@@ -59,7 +57,7 @@ class PickJobsFragment : Fragment() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when(item.itemId) {
+        return when (item.itemId) {
             R.id.logout -> {
                 mainViewModel.signOut()
                 true
@@ -74,13 +72,14 @@ class PickJobsFragment : Fragment() {
     }
 
     private fun initRecyclerView() {
-        val pickingJobStatusChanger: (PickingJob, View, View) -> Unit = { pickingJob, button, progressBar ->
-            mainViewModel.switchPickingJobStatus(pickingJob)
-            button.isClickable = false
-            (button as Button).text = ""
-            progressBar.visibility = View.VISIBLE
-        }
-        pickingJobsAdapter = PickingJobAdapter(pickingJobsList,pickingJobStatusChanger)
+        val pickingJobStatusChanger: (PickingJob, View, View) -> Unit =
+            { pickingJob, button, progressBar ->
+                mainViewModel.switchPickingJobStatus(pickingJob)
+                button.isClickable = false
+                (button as Button).text = ""
+                progressBar.visibility = View.VISIBLE
+            }
+        pickingJobsAdapter = PickingJobAdapter(pickingJobsList, pickingJobStatusChanger)
         layoutManager = LinearLayoutManager(requireContext())
         recyclerView = binding.recyclerViewPickingJobs
         recyclerView.adapter = pickingJobsAdapter
@@ -95,20 +94,26 @@ class PickJobsFragment : Fragment() {
         }
         mainViewModel.errorMessage.observe(viewLifecycleOwner) { errorMessageEvent ->
             errorMessageEvent.getContentIfNotHandled()?.let { errorMessage ->
-                Snackbar.make(requireActivity().findViewById(R.id.nav_host_fragment),errorMessage,Snackbar.LENGTH_SHORT).show()
+                Snackbar.make(
+                    requireActivity().findViewById(R.id.nav_host_fragment),
+                    errorMessage,
+                    Snackbar.LENGTH_SHORT
+                ).show()
             }
         }
 
         mainViewModel.progress.observe(viewLifecycleOwner) { progress ->
-            when(progress) {
+            when (progress) {
                 MainViewModel.Progress.Idle -> {
                     progressBar.visibility = View.GONE
                 }
                 MainViewModel.Progress.Loading -> {
                     progressBar.visibility = View.VISIBLE
                 }
+            }
+        }
         mainViewModel.user.observe(viewLifecycleOwner) { firebaseUser ->
-            if(firebaseUser == null) {
+            if (firebaseUser == null) {
                 findNavController().navigate(PickJobsFragmentDirections.actionPickJobsFragmentToLoginFragment())
             }
         }
