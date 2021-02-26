@@ -8,7 +8,7 @@
     <fragment
         android:id="@+id/loginFragment"
         android:name="com.ocfulfillment.fulfillmentapp.ui.view.LoginFragment"
-        android:label="LoginFragment"
+        android:label=""
         tools:layout="@layout/fragment_login">
         <action
             android:id="@+id/action_loginFragment_to_pickJobsFragment"
@@ -17,7 +17,7 @@
     <fragment
         android:id="@+id/pickJobsFragment"
         android:name="com.ocfulfillment.fulfillmentapp.ui.view.PickJobsFragment"
-        android:label="PickJobsFragment"
+        android:label=""
         tools:layout="@layout/fragment_pick_jobs">
         <action
             android:id="@+id/action_pickJobsFragment_to_loginFragment"
