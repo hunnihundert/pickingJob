@@ -2,6 +2,8 @@ package com.ocfulfillment.fulfillmentapp.ui.view
 
 import android.os.Bundle
 import android.view.*
+import android.widget.Button
+import android.widget.ProgressBar
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
@@ -16,6 +18,7 @@ import com.ocfulfillment.fulfillmentapp.repository.PickingJobRepository
 import com.ocfulfillment.fulfillmentapp.ui.adapter.PickingJobAdapter
 import com.ocfulfillment.fulfillmentapp.ui.viewmodel.MainViewModel
 import com.ocfulfillment.fulfillmentapp.ui.viewmodel.MainViewModelFactory
+import okhttp3.internal.notifyAll
 
 class PickJobsFragment : Fragment() {
 
@@ -30,6 +33,7 @@ class PickJobsFragment : Fragment() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var pickingJobsAdapter: PickingJobAdapter
     private lateinit var layoutManager: LinearLayoutManager
+    private lateinit var progressBar: ProgressBar
 
     private val pickingJobsList = mutableListOf<PickingJob>()
 
@@ -54,7 +58,7 @@ class PickJobsFragment : Fragment() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when(item.itemId) {
+        return when (item.itemId) {
             R.id.logout -> {
                 mainViewModel.signOut()
                 true
@@ -65,13 +69,18 @@ class PickJobsFragment : Fragment() {
 
     private fun initUi() {
         initRecyclerView()
+        progressBar = binding.progressBarListItemStatusLoading
     }
 
     private fun initRecyclerView() {
-        val pickingJobStatusChanger: (PickingJob) -> Unit = { pickingJob ->
-            mainViewModel.switchPickingJobStatus(pickingJob)
-        }
-        pickingJobsAdapter = PickingJobAdapter(pickingJobsList,pickingJobStatusChanger)
+        val pickingJobStatusChanger: (PickingJob, View, View) -> Unit =
+            { pickingJob, button, progressBar ->
+                mainViewModel.switchPickingJobStatus(pickingJob)
+                button.isClickable = false
+                (button as Button).text = ""
+                progressBar.visibility = View.VISIBLE
+            }
+        pickingJobsAdapter = PickingJobAdapter(pickingJobsList, pickingJobStatusChanger)
         layoutManager = LinearLayoutManager(requireContext())
         recyclerView = binding.recyclerViewPickingJobs
         recyclerView.adapter = pickingJobsAdapter
@@ -86,12 +95,26 @@ class PickJobsFragment : Fragment() {
         }
         mainViewModel.errorMessage.observe(viewLifecycleOwner) { errorMessageEvent ->
             errorMessageEvent.getContentIfNotHandled()?.let { errorMessage ->
-                Snackbar.make(requireActivity().findViewById(R.id.nav_host_fragment),errorMessage,Snackbar.LENGTH_SHORT).show()
+                Snackbar.make(
+                    requireActivity().findViewById(R.id.nav_host_fragment),
+                    errorMessage,
+                    Snackbar.LENGTH_SHORT
+                ).show()
             }
         }
 
+        mainViewModel.progress.observe(viewLifecycleOwner) { progress ->
+            when (progress) {
+                MainViewModel.Progress.Idle -> {
+                    progressBar.visibility = View.GONE
+                }
+                MainViewModel.Progress.Loading -> {
+                    progressBar.visibility = View.VISIBLE
+                }
+            }
+        }
         mainViewModel.user.observe(viewLifecycleOwner) { firebaseUser ->
-            if(firebaseUser == null) {
+            if (firebaseUser == null) {
                 findNavController().navigate(PickJobsFragmentDirections.actionPickJobsFragmentToLoginFragment())
             }
         }
