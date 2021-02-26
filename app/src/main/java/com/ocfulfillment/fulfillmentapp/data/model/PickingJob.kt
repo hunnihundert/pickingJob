@@ -19,4 +19,10 @@ data class PickingJob(
     var targetVersion: Long = 0L,
     var tenantOrderId: String = "",
     var version: Long = 0L
-)
+) {
+    companion object {
+        const val PICKING_JOB_STATUS_OPEN = "OPEN"
+        const val PICKING_JOB_STATUS_CLOSED = "CLOSED"
+    }
+}
+
