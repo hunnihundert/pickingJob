@@ -8,6 +8,8 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.snackbar.Snackbar
+import com.ocfulfillment.fulfillmentapp.R
 import com.ocfulfillment.fulfillmentapp.data.model.PickingJob
 import com.ocfulfillment.fulfillmentapp.data.remote.RetrofitClient
 import com.ocfulfillment.fulfillmentapp.databinding.FragmentPickJobsBinding
@@ -67,6 +69,12 @@ class PickJobsFragment : Fragment() {
             pickingJobsList.clear()
             pickingJobsList.addAll(pickingJobs)
             pickingJobsAdapter.notifyDataSetChanged()
+        }
+        mainViewModel.errorMessage.observe(viewLifecycleOwner) { errorMessageEvent ->
+            errorMessageEvent.getContentIfNotHandled()?.let { errorMessage ->
+                Snackbar.make(requireActivity().findViewById(R.id.nav_host_fragment),errorMessage,Snackbar.LENGTH_SHORT).show()
+            }
+
         }
     }
 }
