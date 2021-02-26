@@ -26,10 +26,6 @@ class MainViewModel(private val repository: PickingJobRepository, application: A
         get() = _user
     private var _user = MutableLiveData<FirebaseUser?>(null)
 
-    val pickingJobs: LiveData<List<PickingJob>>
-        get() = _pickingJobs
-    private var _pickingJobs = MutableLiveData<List<PickingJob>>()
-
     val email = MutableLiveData<String>()
     val password = MutableLiveData<String>()
     val emailInputError = MutableLiveData("")
@@ -94,17 +90,49 @@ class MainViewModel(private val repository: PickingJobRepository, application: A
         }
     }
 
-    internal fun getPickingJobs() {
+    internal fun switchPickingJobStatus(pickingJob: PickingJob) {
+        if (pickingJob.status == PickingJob.PICKING_JOB_STATUS_OPEN) {
+            pickingJob.status = PickingJob.PICKING_JOB_STATUS_CLOSED
+        } else {
+            pickingJob.status = PickingJob.PICKING_JOB_STATUS_OPEN
+        }
+        updatePickingJob(pickingJob)
+    }
+
+    private fun updatePickingJob(pickingJob: PickingJob) {
+        val pickingJobId = pickingJob.id
+        val pickingJobStatus = pickingJob.status
         viewModelScope.launch {
-            _pickingJobs.value = repository.getPickingJobs()
+            if (token != null) {
+                repository.updatePickingJob(
+                    token!!,
+                    pickingJob.version,
+                    pickingJobId,
+                    pickingJobStatus
+                )
+            } else {
+                // access token null
+            }
+
         }
     }
 
-    internal fun updatePickingJobStat(pickingJobV1: PickingJob) {
-        val pickingJobId = pickingJobV1.id
-        viewModelScope.launch {
-            repository.updatePickingJob(pickingJobId)
+    internal fun getPickingJobsLiveData(): LiveData<List<PickingJob>> {
+        val pickingJobs = MutableLiveData<List<PickingJob>>()
+        repository.getPickingJobs().addSnapshotListener { snapshot, error ->
+            if(error != null) {
+                // error
+                return@addSnapshotListener
+            }
+            val pickingJobsLive = mutableListOf<PickingJob>()
+            if (snapshot != null) {
+                for (document in snapshot) {
+                    pickingJobsLive.add(document.toObject(PickingJob::class.java))
+                }
+                pickingJobs.value = pickingJobsLive
+            }
         }
+        return pickingJobs
     }
 
     companion object {

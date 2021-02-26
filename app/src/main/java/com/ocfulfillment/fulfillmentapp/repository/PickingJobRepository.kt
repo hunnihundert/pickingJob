@@ -1,33 +1,32 @@
 package com.ocfulfillment.fulfillmentapp.repository
 
 import android.util.Log
+import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import com.ocfulfillment.fulfillmentapp.data.model.PickingJob
+import com.ocfulfillment.fulfillmentapp.data.model.PickingPostAction
 import com.ocfulfillment.fulfillmentapp.data.remote.PickingJobsApi
-import kotlinx.coroutines.tasks.await
+import com.ocfulfillment.fulfillmentapp.util.ACTION_MODIFY_PICKJOB
 
 class PickingJobRepository(private val pickingJobsApi: PickingJobsApi) {
 
-    internal suspend fun updatePickingJob(pickingJobId: String) {
-        pickingJobsApi.updatePickJob(pickingJobId)
+    private val db = Firebase.firestore
+
+    internal suspend fun updatePickingJob(accessToken: String, version: Long, pickingJobId: String, pickingJobStatus: String) {
+        val bearerToken = "Bearer $accessToken"
+        val action = PickingPostAction.ModificationAction(ACTION_MODIFY_PICKJOB, pickingJobStatus)
+        val actions = listOf(action)
+        val pickingPostAction = PickingPostAction(version, actions)
+        pickingJobsApi.updatePickJob(bearerToken, pickingJobId, pickingPostAction)
     }
 
-    internal suspend fun getPickingJobs(): List<PickingJob> {
-        val db = Firebase.firestore
-        val pickingJobs = mutableListOf<PickingJob>()
-        db.collection("mobile_android-picking-v1-pickjobs")
-            .get()
-            .addOnSuccessListener { result ->
-                for (document in result) {
-                    val pickingJob = document.toObject(PickingJob::class.java)
-                    pickingJobs.add(pickingJob)
-                }
-            }.await()
-        return pickingJobs
+    internal fun getPickingJobs(): CollectionReference {
+        return db.collection("mobile_android-picking-v1-pickjobs")
     }
+
 
     companion object {
         private const val TAG = "PickingJobRepository"
     }
+
 }

@@ -45,7 +45,6 @@ class PickJobsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         initUi()
         initObserver()
-        initViewModel()
     }
 
     private fun initUi() {
@@ -54,7 +53,7 @@ class PickJobsFragment : Fragment() {
 
     private fun initRecyclerView() {
         val pickingJobStatusChanger: (PickingJob) -> Unit = { pickingJob ->
-            mainViewModel.updatePickingJobStat(pickingJob)
+            mainViewModel.switchPickingJobStatus(pickingJob)
         }
         pickingJobsAdapter = PickingJobAdapter(pickingJobsList,pickingJobStatusChanger)
         layoutManager = LinearLayoutManager(requireContext())
@@ -64,14 +63,10 @@ class PickJobsFragment : Fragment() {
     }
 
     private fun initObserver() {
-        mainViewModel.pickingJobs.observe(viewLifecycleOwner) { pickingJobs ->
+        mainViewModel.getPickingJobsLiveData().observe(viewLifecycleOwner) { pickingJobs ->
             pickingJobsList.clear()
             pickingJobsList.addAll(pickingJobs)
             pickingJobsAdapter.notifyDataSetChanged()
         }
-    }
-
-    private fun initViewModel() {
-        mainViewModel.getPickingJobs()
     }
 }
