@@ -4,6 +4,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.ProgressBar
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -31,6 +33,7 @@ class PickJobsFragment : Fragment() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var pickingJobsAdapter: PickingJobAdapter
     private lateinit var layoutManager: LinearLayoutManager
+    private lateinit var progressBar: ProgressBar
 
     private val pickingJobsList = mutableListOf<PickingJob>()
 
@@ -51,11 +54,15 @@ class PickJobsFragment : Fragment() {
 
     private fun initUi() {
         initRecyclerView()
+        progressBar = binding.progressBarListItemStatusLoading
     }
 
     private fun initRecyclerView() {
-        val pickingJobStatusChanger: (PickingJob) -> Unit = { pickingJob ->
+        val pickingJobStatusChanger: (PickingJob, View, View) -> Unit = { pickingJob, button, progressBar ->
             mainViewModel.switchPickingJobStatus(pickingJob)
+            button.isClickable = false
+            (button as Button).text = ""
+            progressBar.visibility = View.VISIBLE
         }
         pickingJobsAdapter = PickingJobAdapter(pickingJobsList,pickingJobStatusChanger)
         layoutManager = LinearLayoutManager(requireContext())
@@ -74,7 +81,16 @@ class PickJobsFragment : Fragment() {
             errorMessageEvent.getContentIfNotHandled()?.let { errorMessage ->
                 Snackbar.make(requireActivity().findViewById(R.id.nav_host_fragment),errorMessage,Snackbar.LENGTH_SHORT).show()
             }
-
+        }
+        mainViewModel.progress.observe(viewLifecycleOwner) { progress ->
+            when(progress) {
+                MainViewModel.Progress.Idle -> {
+                    progressBar.visibility = View.GONE
+                }
+                MainViewModel.Progress.Loading -> {
+                    progressBar.visibility = View.VISIBLE
+                }
+            }
         }
     }
 }
