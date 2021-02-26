@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
 import android.widget.Button
 import android.widget.ProgressBar
 import android.widget.TextView
@@ -66,17 +67,26 @@ class LoginFragment : Fragment() {
         email = binding.textInputLayoutLoginEmail
         password = binding.textInputLayoutLoginPassword
         forgotPassword = binding.textViewLoginForgotPassword
+        login = binding.buttonLoginLogin
+        progressBar = binding.progressBarLoginButtonLoading
+
+        password.editText?.setOnEditorActionListener { _, actionId, _ ->
+            when(actionId) {
+                EditorInfo.IME_ACTION_SEND -> {
+                    login.performClick()
+                    true
+                }
+                else -> true
+            }
+        }
 
         forgotPassword.setOnClickListener {
             // navigate to forgot password
         }
 
-        login = binding.buttonLoginLogin
         login.setOnClickListener {
             mainViewModel.login(requireActivity())
         }
-
-        progressBar = binding.progressBarLoginButtonLoading
     }
 
     private fun initObserver() {

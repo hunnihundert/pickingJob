@@ -18,6 +18,7 @@ import com.ocfulfillment.fulfillmentapp.repository.PickingJobRepository
 import com.ocfulfillment.fulfillmentapp.ui.adapter.PickingJobAdapter
 import com.ocfulfillment.fulfillmentapp.ui.viewmodel.MainViewModel
 import com.ocfulfillment.fulfillmentapp.ui.viewmodel.MainViewModelFactory
+import okhttp3.internal.notifyAll
 
 class PickJobsFragment : Fragment() {
 
