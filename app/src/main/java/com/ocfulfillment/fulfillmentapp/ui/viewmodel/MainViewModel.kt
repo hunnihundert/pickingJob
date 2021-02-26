@@ -34,8 +34,16 @@ class MainViewModel(private val repository: PickingJobRepository, application: A
     val emailInputError = MutableLiveData("")
     val passwordInputError = MutableLiveData("")
 
+    sealed class Progress {
+        object Loading: Progress()
+        object Idle: Progress()
+    }
+
+    private var _progress = MutableLiveData<Progress>(Progress.Idle)
+    val progress: LiveData<Progress> = _progress
 
     internal fun login(activity: Activity) {
+        _progress.value = Progress.Loading
         resetErrorTexts()
         if (isInputValid()) {
             val email = email.value!!
@@ -50,6 +58,7 @@ class MainViewModel(private val repository: PickingJobRepository, application: A
                     } else {
                         setInvalidEmailOrPassWord()
                     }
+                    _progress.value = Progress.Idle
                 }
         }
     }
@@ -108,7 +117,6 @@ class MainViewModel(private val repository: PickingJobRepository, application: A
     }
 
     private fun updatePickingJob(pickingJob: PickingJob) {
-
         val pickingJobId = pickingJob.id
         val pickingJobStatus = pickingJob.status
         viewModelScope.launch {
@@ -145,6 +153,7 @@ class MainViewModel(private val repository: PickingJobRepository, application: A
     }
 
     internal fun getPickingJobsLiveData(): LiveData<List<PickingJob>> {
+        _progress.value = Progress.Loading
         val pickingJobs = MutableLiveData<List<PickingJob>>()
         try {
             repository.getPickingJobs().addSnapshotListener { snapshot, error ->
@@ -184,6 +193,7 @@ class MainViewModel(private val repository: PickingJobRepository, application: A
                 }
             }
         }
+        _progress.value = Progress.Idle
         return pickingJobs
     }
 
