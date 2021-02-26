@@ -17,7 +17,7 @@
             android:orientation="horizontal">
 
             <TextView
-                android:id="@+id/textView_pickJobs_id"
+                android:id="@+id/textView_listItem_id"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_gravity="center"
@@ -28,15 +28,28 @@
                 tools:text="260cdab0-d16e-4b76-8f31-a36b2e81db4c-0" />
 
             <Button
-                android:id="@+id/button_pickJobs_status"
+                android:id="@+id/button_listItem_status"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/textView_pickJobs_id"
+                app:layout_constraintStart_toEndOf="@id/textView_listItem_id"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:text="OPEN" />
+            <ProgressBar
+                android:id="@+id/progressBar_listItem_statusLoading"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_margin="8dp"
+                android:gravity="center"
+                android:elevation="4dp"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="@id/button_listItem_status"
+                app:layout_constraintEnd_toEndOf="@id/button_listItem_status"
+                app:layout_constraintStart_toStartOf="@id/button_listItem_status"
+                app:layout_constraintTop_toTopOf="@id/button_listItem_status"
+                tools:visibility="visible"/>
         </androidx.constraintlayout.widget.ConstraintLayout>
 
 

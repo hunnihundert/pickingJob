@@ -1,10 +1,11 @@
 package com.ocfulfillment.fulfillmentapp.ui.adapter
 
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.ocfulfillment.fulfillmentapp.data.model.PickingJob
 
-class PickingJobAdapter(private val pickingJobs: List<PickingJob>, private val pickingJobStatusChanger: (PickingJob) -> (Unit)): RecyclerView.Adapter<PickingJobViewHolder>() {
+class PickingJobAdapter(private val pickingJobs: List<PickingJob>, private val pickingJobStatusChanger: (PickingJob, View, View) -> (Unit)): RecyclerView.Adapter<PickingJobViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PickingJobViewHolder {
         return PickingJobViewHolder.create(parent)
