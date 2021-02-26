@@ -11,4 +11,5 @@
     <string name="textInputLayout_login_invalidLoginCredentials">Invalid Login Credentials</string>
     <string name="contentDescription_login_logo">Logo</string>
     <string name="errorMessage_unknownError">Unknown Error</string>
+    <string name="menuItem_title_logout">Log out</string>
 </resources>
