@@ -9,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.ktx.Firebase
 import com.ocfulfillment.fulfillmentapp.R
 import com.ocfulfillment.fulfillmentapp.data.model.PickingJob
@@ -34,9 +35,11 @@ class MainViewModel(private val repository: PickingJobRepository, application: A
     val emailInputError = MutableLiveData("")
     val passwordInputError = MutableLiveData("")
 
+    private lateinit var snapShotListener: ListenerRegistration
+
     sealed class Progress {
-        object Loading: Progress()
-        object Idle: Progress()
+        object Loading : Progress()
+        object Idle : Progress()
     }
 
     private var _progress = MutableLiveData<Progress>(Progress.Idle)
@@ -133,7 +136,8 @@ class MainViewModel(private val repository: PickingJobRepository, application: A
                     )
                 }
             } catch (throwable: Throwable) {
-                var errorMessage = getApplication<Application>().resources.getString(R.string.errorMessage_unknownError)
+                var errorMessage =
+                    getApplication<Application>().resources.getString(R.string.errorMessage_unknownError)
                 when (throwable) {
                     is HttpException -> {
                         val errorCode = throwable.code()
@@ -159,28 +163,28 @@ class MainViewModel(private val repository: PickingJobRepository, application: A
         _progress.value = Progress.Loading
         val pickingJobs = MutableLiveData<List<PickingJob>>()
         try {
-            if(_user.value != null) {
-                repository.getPickingJobs().addSnapshotListener { snapshot, error ->
-                    if (error != null) {
-                        val errorCode = error.code
-                        var errorMessage = getApplication<Application>().resources.getString(R.string.errorMessage_unknownError)
-                        error.localizedMessage?.let {
-                            errorMessage = it
-                        }
-                        _errorMessage.value = Event("$errorCode: $errorMessage")
-                        return@addSnapshotListener
+            snapShotListener = repository.getPickingJobs().addSnapshotListener { snapshot, error ->
+                if (error != null) {
+                    val errorCode = error.code
+                    var errorMessage =
+                        getApplication<Application>().resources.getString(R.string.errorMessage_unknownError)
+                    error.localizedMessage?.let {
+                        errorMessage = it
                     }
-                    val pickingJobsLive = mutableListOf<PickingJob>()
-                    if (snapshot != null) {
-                        for (document in snapshot) {
-                            pickingJobsLive.add(document.toObject(PickingJob::class.java))
-                        }
-                        pickingJobs.value = pickingJobsLive
+                    _errorMessage.value = Event("$errorCode: $errorMessage")
+                    return@addSnapshotListener
+                }
+                val pickingJobsLive = mutableListOf<PickingJob>()
+                if (snapshot != null) {
+                    for (document in snapshot) {
+                        pickingJobsLive.add(document.toObject(PickingJob::class.java))
                     }
+                    pickingJobs.value = pickingJobsLive
                 }
             }
         } catch (throwable: Throwable) {
-            var errorMessage = getApplication<Application>().resources.getString(R.string.errorMessage_unknownError)
+            var errorMessage =
+                getApplication<Application>().resources.getString(R.string.errorMessage_unknownError)
             when (throwable) {
                 is HttpException -> {
                     val errorCode = throwable.code()
@@ -203,6 +207,7 @@ class MainViewModel(private val repository: PickingJobRepository, application: A
     }
 
     internal fun signOut() {
+        snapShotListener.remove()
         _user.value = null
         auth.signOut()
     }
