@@ -32,6 +32,7 @@ class MainActivity : AppCompatActivity() {
         val appBarConfiguration = AppBarConfiguration.Builder(topLevelDestinations).build()
         toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
+        supportActionBar?.setTitle("")
         toolbar.setupWithNavController(navController, appBarConfiguration)
     }
 
