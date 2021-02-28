@@ -20,7 +20,7 @@ class PickingJobRepository(private val pickingJobsApi: PickingJobsApi) {
         pickingJobsApi.updatePickJob(bearerToken, pickingJobId, pickingPostAction)
     }
 
-    internal fun getPickingJobs(): CollectionReference {
+    internal fun getPickingJobsDatabaseReference(): CollectionReference {
         return db.collection("mobile_android-picking-v1-pickjobs")
     }
 

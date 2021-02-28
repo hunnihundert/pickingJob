@@ -113,6 +113,53 @@ class MainViewModel(private val repository: PickingJobRepository, application: A
         }
     }
 
+    internal fun getPickingJobsLiveData(): LiveData<List<PickingJob>> {
+        _progress.value = Progress.Loading
+        val pickingJobs = MutableLiveData<List<PickingJob>>()
+        try {
+            snapShotListener = repository.getPickingJobsDatabaseReference().addSnapshotListener { snapshot, error ->
+                if (error != null) {
+                    val errorCode = error.code
+                    var errorMessage =
+                        getApplication<Application>().resources.getString(R.string.errorMessage_unknownError)
+                    error.localizedMessage?.let {
+                        errorMessage = it
+                    }
+                    _errorMessage.value = Event("$errorCode: $errorMessage")
+                    return@addSnapshotListener
+                }
+                val pickingJobsLive = mutableListOf<PickingJob>()
+                if (snapshot != null) {
+                    for (document in snapshot) {
+                        pickingJobsLive.add(document.toObject(PickingJob::class.java))
+                    }
+                    pickingJobs.value = pickingJobsLive
+                }
+            }
+        } catch (throwable: Throwable) {
+            var errorMessage =
+                getApplication<Application>().resources.getString(R.string.errorMessage_unknownError)
+            when (throwable) {
+                is HttpException -> {
+                    val errorCode = throwable.code()
+                    throwable.localizedMessage?.let {
+                        errorMessage = it
+                    }
+                    _errorMessage.value = Event("$errorCode: $errorMessage")
+                }
+                else -> {
+                    throwable.localizedMessage?.let {
+                        errorMessage = it
+                    }
+                    _errorMessage.value = Event(errorMessage)
+
+                }
+            }
+        }
+        _progress.value = Progress.Idle
+        return pickingJobs
+    }
+
     internal fun switchPickingJobStatus(pickingJob: PickingJob) {
         if (pickingJob.status == PickingJob.PICKING_JOB_STATUS_OPEN) {
             pickingJob.status = PickingJob.PICKING_JOB_STATUS_CLOSED
@@ -157,53 +204,6 @@ class MainViewModel(private val repository: PickingJobRepository, application: A
             }
 
         }
-    }
-
-    internal fun getPickingJobsLiveData(): LiveData<List<PickingJob>> {
-        _progress.value = Progress.Loading
-        val pickingJobs = MutableLiveData<List<PickingJob>>()
-        try {
-            snapShotListener = repository.getPickingJobs().addSnapshotListener { snapshot, error ->
-                if (error != null) {
-                    val errorCode = error.code
-                    var errorMessage =
-                        getApplication<Application>().resources.getString(R.string.errorMessage_unknownError)
-                    error.localizedMessage?.let {
-                        errorMessage = it
-                    }
-                    _errorMessage.value = Event("$errorCode: $errorMessage")
-                    return@addSnapshotListener
-                }
-                val pickingJobsLive = mutableListOf<PickingJob>()
-                if (snapshot != null) {
-                    for (document in snapshot) {
-                        pickingJobsLive.add(document.toObject(PickingJob::class.java))
-                    }
-                    pickingJobs.value = pickingJobsLive
-                }
-            }
-        } catch (throwable: Throwable) {
-            var errorMessage =
-                getApplication<Application>().resources.getString(R.string.errorMessage_unknownError)
-            when (throwable) {
-                is HttpException -> {
-                    val errorCode = throwable.code()
-                    throwable.localizedMessage?.let {
-                        errorMessage = it
-                    }
-                    _errorMessage.value = Event("$errorCode: $errorMessage")
-                }
-                else -> {
-                    throwable.localizedMessage?.let {
-                        errorMessage = it
-                    }
-                    _errorMessage.value = Event(errorMessage)
-
-                }
-            }
-        }
-        _progress.value = Progress.Idle
-        return pickingJobs
     }
 
     internal fun signOut() {
