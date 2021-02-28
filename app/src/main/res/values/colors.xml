@@ -9,5 +9,6 @@
     <color name="white">#FFFFFFFF</color>
     <color name="fulfillmentToolsDarkBlue">#000080</color>
     <color name="fulfillmentToolsBrightBlue">#3a66f6</color>
+    <color name="light_grey">#F3F3F3</color>
 
 </resources>
