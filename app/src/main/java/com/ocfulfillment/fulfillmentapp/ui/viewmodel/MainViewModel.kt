@@ -25,15 +25,15 @@ class MainViewModel(private val repository: PickingJobRepository, application: A
     private var token: String? = null
 
     private var _user = MutableLiveData<FirebaseUser?>(null)
-    val user: LiveData<FirebaseUser?> = _user
+    internal val user: LiveData<FirebaseUser?> = _user
 
     private var _errorMessage = MutableLiveData<Event<String>>()
-    val errorMessage: LiveData<Event<String>> = _errorMessage
+    internal val errorMessage: LiveData<Event<String>> = _errorMessage
 
     val email = MutableLiveData<String>()
     val password = MutableLiveData<String>()
-    val emailInputError = MutableLiveData("")
-    val passwordInputError = MutableLiveData("")
+    internal val emailInputError = MutableLiveData("")
+    internal val passwordInputError = MutableLiveData("")
 
     private lateinit var snapShotListener: ListenerRegistration
 
