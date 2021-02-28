@@ -106,7 +106,11 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_margin="@dimen/margin_login_progressBar"
+<<<<<<< HEAD
             android:elevation="@dimen/elevation_progressBar"
+=======
+            android:elevation="@dimen/elevation_login_progressBar"
+>>>>>>> 2a3862c469867722522bd156eb19c64f4b2be0fa
             app:layout_constraintBottom_toBottomOf="@id/button_login_login"
             app:layout_constraintEnd_toEndOf="@id/button_login_login"
             app:layout_constraintStart_toStartOf="@id/button_login_login"
