@@ -13,6 +13,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputLayout
 import com.ocfulfillment.fulfillmentapp.R
 import com.ocfulfillment.fulfillmentapp.data.remote.RetrofitClient
@@ -123,8 +124,18 @@ class LoginFragment : Fragment() {
                     progressBar.visibility = View.VISIBLE
                 }
             }
-
         }
+
+        mainViewModel.errorMessage.observe(viewLifecycleOwner) { errorMessageEvent ->
+            errorMessageEvent.getContentIfNotHandled()?.let { errorMessage ->
+                Snackbar.make(
+                    requireActivity().findViewById(R.id.nav_host_fragment),
+                    errorMessage,
+                    Snackbar.LENGTH_SHORT
+                ).show()
+            }
+        }
+
 
     }
 }
