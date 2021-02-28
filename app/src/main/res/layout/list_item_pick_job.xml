@@ -6,10 +6,10 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="4dp"
-        app:cardCornerRadius="4dp"
-        app:cardElevation="4dp"
-        app:cardMaxElevation="4dp">
+        android:layout_margin="@dimen/margin_listItem_cardView"
+        app:cardCornerRadius="@dimen/cornerRadius_listItem_cardView"
+        app:cardElevation="@dimen/elevation_listItem_cardView"
+        app:cardMaxElevation="@dimen/elevation_listItem_cardView">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -22,9 +22,9 @@
                 android:layout_height="match_parent"
                 android:layout_gravity="center"
                 android:gravity="center"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
                 tools:text="260cdab0-d16e-4b76-8f31-a36b2e81db4c-0" />
 
             <Button
@@ -37,19 +37,20 @@
                 app:layout_constraintStart_toEndOf="@id/textView_listItem_id"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:text="OPEN" />
+
             <ProgressBar
                 android:id="@+id/progressBar_listItem_statusLoading"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:layout_margin="8dp"
+                android:layout_margin="@dimen/margin_listItem_progressBar"
+                android:elevation="@dimen/elevation_progressBar"
                 android:gravity="center"
-                android:elevation="4dp"
                 android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="@id/button_listItem_status"
                 app:layout_constraintEnd_toEndOf="@id/button_listItem_status"
                 app:layout_constraintStart_toStartOf="@id/button_listItem_status"
                 app:layout_constraintTop_toTopOf="@id/button_listItem_status"
-                tools:visibility="visible"/>
+                tools:visibility="visible" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
 

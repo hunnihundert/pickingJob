@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="marginTop_login_logoTop_portrait">96dp</dimen>
+    <dimen name="marginTop_login_logoTop_landscape">24dp</dimen>
+    <dimen name="marginTop_login_emailTextInput_portrait">64dp</dimen>
+    <dimen name="marginTop_login_emailTextInput_landscape">32dp</dimen>
+    <dimen name="marginTop_login_passwordTextInput_portrait">12dp</dimen>
+    <dimen name="marginTop_login_passwordTextInput_landscape">8dp</dimen>
+    <dimen name="marginTop_login_forgotPasswordTextView_portrait">4dp</dimen>
+    <dimen name="marginTop_login_forgotPasswordTextView_landscape">0dp</dimen>
+    <dimen name="marginTop_login_loginButton_portrait">48dp</dimen>
+    <dimen name="marginTop_login_loginButton_landscape">24dp</dimen>
+
+    <dimen name="margin_login_progressBar">4dp</dimen>
+    <dimen name="margin_listItem_progressBar">8dp</dimen>
+    <dimen name="elevation_progressBar">4dp</dimen>
+    <dimen name="width_login_logo">300dp</dimen>
+    <dimen name="padding_login_constraintLayout">24dp</dimen>
+    <dimen name="height_login_logo" type="dimen" format="float">69.434176855274dp</dimen>
+
+    <dimen name="elevation_listItem_cardView">4dp</dimen>
+    <dimen name="cornerRadius_listItem_cardView">4dp</dimen>
+    <dimen name="margin_listItem_cardView">4dp</dimen>
+</resources>

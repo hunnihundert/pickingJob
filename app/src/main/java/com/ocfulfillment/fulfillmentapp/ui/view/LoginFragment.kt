@@ -38,8 +38,8 @@ class LoginFragment : Fragment() {
     private lateinit var login: Button
     private lateinit var progressBar: ProgressBar
 
-    override fun onResume() {
-        super.onResume()
+    override fun onStart() {
+        super.onStart()
         requireActivity().findViewById<Toolbar>(R.id.toolbar).visibility = View.GONE
     }
 

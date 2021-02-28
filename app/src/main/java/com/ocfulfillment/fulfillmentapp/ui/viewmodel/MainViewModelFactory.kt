@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.ocfulfillment.fulfillmentapp.repository.PickingJobRepository
 
 class MainViewModelFactory(private val repository: PickingJobRepository, private val application: Application): ViewModelProvider.Factory {
+    @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         return MainViewModel(repository, application) as T
     }
