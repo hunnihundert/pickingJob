@@ -5,29 +5,20 @@ import android.view.*
 import android.widget.Button
 import android.widget.ProgressBar
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import com.ocfulfillment.fulfillmentapp.R
 import com.ocfulfillment.fulfillmentapp.data.model.PickingJob
-import com.ocfulfillment.fulfillmentapp.data.remote.RetrofitClient
 import com.ocfulfillment.fulfillmentapp.databinding.FragmentPickJobsBinding
-import com.ocfulfillment.fulfillmentapp.repository.PickingJobRepository
 import com.ocfulfillment.fulfillmentapp.ui.adapter.PickingJobAdapter
 import com.ocfulfillment.fulfillmentapp.ui.viewmodel.MainViewModel
-import com.ocfulfillment.fulfillmentapp.ui.viewmodel.MainViewModelFactory
-import okhttp3.internal.notifyAll
+import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 
 class PickJobsFragment : Fragment() {
 
-    private val mainViewModel: MainViewModel by activityViewModels {
-        MainViewModelFactory(
-            PickingJobRepository(RetrofitClient.getPickingJobsApi()),
-            requireActivity().application
-        )
-    }
+    private val mainViewModel: MainViewModel by sharedViewModel()
 
     private lateinit var binding: FragmentPickJobsBinding
     private lateinit var recyclerView: RecyclerView

@@ -9,29 +9,19 @@ import android.widget.Button
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.widget.Toolbar
-import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputLayout
 import com.ocfulfillment.fulfillmentapp.R
-import com.ocfulfillment.fulfillmentapp.data.remote.RetrofitClient
 import com.ocfulfillment.fulfillmentapp.databinding.FragmentLoginBinding
-import com.ocfulfillment.fulfillmentapp.repository.PickingJobRepository
 import com.ocfulfillment.fulfillmentapp.ui.viewmodel.MainViewModel
-import com.ocfulfillment.fulfillmentapp.ui.viewmodel.MainViewModelFactory
+import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 
 class LoginFragment : Fragment() {
 
     private lateinit var binding: FragmentLoginBinding
-    private val mainViewModel: MainViewModel by activityViewModels {
-        MainViewModelFactory(
-            PickingJobRepository(RetrofitClient.getPickingJobsApi()),
-            requireActivity().application
-        )
-    }
-
+    private val mainViewModel: MainViewModel by sharedViewModel()
     private lateinit var email: TextInputLayout
     private lateinit var password: TextInputLayout
     private lateinit var forgotPassword: TextView
@@ -72,7 +62,7 @@ class LoginFragment : Fragment() {
         progressBar = binding.progressBarLoginButtonLoading
 
         password.editText?.setOnEditorActionListener { _, actionId, _ ->
-            when(actionId) {
+            when (actionId) {
                 EditorInfo.IME_ACTION_SEND -> {
                     login.performClick()
                     true
@@ -106,7 +96,7 @@ class LoginFragment : Fragment() {
         }
 
         mainViewModel.progress.observe(viewLifecycleOwner) { progress ->
-            when(progress) {
+            when (progress) {
                 MainViewModel.Progress.Idle -> {
                     email.isEnabled = true
                     password.isEnabled = true

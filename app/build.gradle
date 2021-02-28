@@ -76,4 +76,7 @@ dependencies {
     implementation platform('com.google.firebase:firebase-bom:26.5.0')
     implementation 'com.google.firebase:firebase-firestore-ktx'
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-play-services:$coroutine_version"
+
+    // Koin
+    implementation "org.koin:koin-androidx-viewmodel:$koin_version"
 }
